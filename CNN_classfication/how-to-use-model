@@ -1,0 +1,53 @@
+downlaod model first from here https://drive.google.com/file/d/1BTyMweYHi8dwFfJt6DHX80d-R51-CBzM/view?usp=sharing
+than use this code below
+
+from tensorflow.keras.models import load_model
+
+# Load the saved model
+loaded_model = load_model("dog_cat_model.h5")
+
+import ipywidgets as widgets
+from IPython.display import display, Image
+import numpy as np
+from tensorflow.keras.preprocessing import image
+
+def predict_and_display(img_path):
+    # Load and display the image
+    img = Image(filename=img_path)
+    display(img)
+
+    # Load and preprocess the image
+    test_image = image.load_img(img_path, target_size=(200, 200))
+    test_image = image.img_to_array(test_image)
+    test_image = np.expand_dims(test_image, axis=0)
+
+    # Predict the class
+    result = loaded_model.predict(test_image)
+
+    # Display the prediction
+    if result >= 0.5:
+        prediction_label.value = "Dog"
+    else:
+        prediction_label.value = "Cat"
+
+# Create an Upload button widget
+upload_button = widgets.FileUpload()
+
+# Create a Label widget for displaying the prediction
+prediction_label = widgets.Label(value="Prediction: ")
+
+# Define a function to handle the file upload event
+def on_upload_button_click(change):
+    if upload_button.value:
+        img_path = list(upload_button.value.keys())[0]
+        predict_and_display(img_path)
+        # Clear the uploaded file after processing
+        upload_button.value.clear()
+
+# Attach the function to the button's click event
+upload_button.observe(on_upload_button_click, names='value')
+
+# Display the widgets
+display(upload_button)
+display(prediction_label)
+After runing this code click on upload button and upload pic predict whether it's a cat or a dog. 
